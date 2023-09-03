@@ -586,8 +586,8 @@ const Home = props => {
 
         const isWithinRadius = await checkDeviceLocation();
 
-        if (!isWithinRadius && active == true) {
-          console.log('isWithinRadius: false');
+        if (!(isWithinRadius && isWithinTimeInterval()) && active == true) {
+          console.log('isWithinRadius && isWithinTimeInterval: false');
           active = false;
         }
 
@@ -851,6 +851,18 @@ const Home = props => {
   const locationNotSpoofed = () => {
     if (solana_nft_minting_geo_locked && solana_nft_minting_block_desktop) {
       return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf("Mobi") !== -1);
+    } else {
+      return true;
+    }
+  };
+
+  const isWithinTimeInterval = () => {
+    if (solana_nft_minting_start_times[0].length > 0) {
+      const startTime = parseInt(solana_nft_minting_start_times[0]);
+      const endTime = parseInt(solana_nft_minting_end_times[0]);
+      const currentTime = Date.now();
+
+      return (currentTime > startTime && currentTime < endTime);
     } else {
       return true;
     }
